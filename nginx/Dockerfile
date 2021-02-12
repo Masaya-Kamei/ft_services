@@ -1,39 +1,31 @@
 FROM	alpine:latest
 
-RUN		set -ex; \
-		apk update; \
-		apk add --no-cache \
-			wget vim unzip openssl \
-			nginx \
-			php7 php7-mbstring php7-gd php7-iconv \
-			php7-fpm php7-mysqli php7-json certbot openrc; \
-		mkdir /run/nginx/; \
-		rm -rf /var/cache/apk/*
+RUN	set -ex; \
+	apk update; \
+	apk add --no-cache \
+		vim openrc nginx openssh-server; \
+	rm -rf /var/cache/apk/*
 
-RUN     sed -i 's/#rc_sys=""/rc_sys="lxc"/g' /etc/rc.conf; \
-        echo 'rc_provide="loopback net"' >> /etc/rc.conf; \
-        sed -i 's/^#\(rc_logger="YES"\)$/\1/' /etc/rc.conf; \
-        sed -i '/tty/d' /etc/inittab; \
-        sed -i 's/hostname $opts/# hostname $opts/g' /etc/init.d/hostname; \
-        sed -i 's/mount -t tmpfs/# mount -t tmpfs/g' /lib/rc/sh/init.sh; \
-        sed -i 's/cgroup_add_service /# cgroup_add_service /g' /lib/rc/sh/openrc-run.sh; \
+RUN     set -ex; \
+        sed -i -e '275 s/cgroup_add_service/#cgroup_add_service/' /lib/rc/sh/openrc-run.sh; \
         mkdir /run/openrc; \
         touch /run/openrc/softlevel; \
         rc-status
 
-WORKDIR /etc/nginx
-RUN		openssl req -newkey rsa:4096 \
-			-x509 \
-			-sha256 \
-			-days 3650 \
-			-nodes \
-			-out server.crt \
-			-keyout server.key \
-			-subj "/C=JP/ST=Tokyo/L=Minato-ku/O=42Tokyo/OU=August/CN=example.com"
+RUN     set -ex; \
+        adduser user42 -D; \
+        echo 'user42:user42' | chpasswd; \
+        sed -i -e 's/#\(PasswordAuthentication yes\)/\1/g' /etc/ssh/sshd_config
+
+# WORKDIR /etc/nginx
+# RUN     openssl req -newkey rsa:4096 -x509 -sha256 \
+#                 -days 365 -nodes -out server.crt -keyout server.key \
+#                 -subj "/C=JP/ST=Tokyo/L=Minato-ku/O=42Tokyo/OU=August/CN=example.com"
 
 WORKDIR /
+# COPY    ../cert/server.crt /etc/nginx/server.crt
+# COPY    ../cert/server.key /etc/nginx/server.key
 COPY	./srcs/default.conf /etc/nginx/conf.d/default.conf
-#COPY	./srcs/www.conf /etc/php7/php-fpm.d/www.conf
 COPY	./srcs/entrypoint.sh /usr/bin/
 RUN		set -ex; \
 		chmod +r /etc/nginx/conf.d/default.conf; \

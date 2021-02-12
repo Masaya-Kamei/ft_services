@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  labels:
+    component: mysql
+spec:
+  selector:
+    matchLabels:
+      component: mysql
+  template:
+    metadata:
+      labels:
+        component: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mkamei/mysql
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: claim-volume
+          mountPath: /data
+      volumes:
+      - name: claim-volume
+        persistentVolumeClaim:
+          claimName: pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  type: ClusterIP
+  selector:
+    component: mysql
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3306
+      targetPort: 3306

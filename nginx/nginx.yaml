@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    component: nginx
+spec:
+  selector:
+    matchLabels:
+      component: nginx
+  template:
+    metadata:
+      labels:
+        component: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: mkamei/nginx
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+          containerPort: 443
+          containerPort: 22
+        volumeMounts:
+        - name: secret-volume
+          mountPath: /secrets
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: secret-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  annotations:
+    metallb.universe.tf/allow-shared-ip: sharing.key
+spec:
+  type: LoadBalancer
+  selector:
+    component: nginx
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80
+  - name: https
+    protocol: TCP
+    port: 443
+    targetPort: 443
+  - name: ssh
+    protocol: TCP
+    port: 22
+    targetPort: 22

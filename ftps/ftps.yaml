@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ftps
+  labels:
+    component: ftps
+spec:
+  selector:
+    matchLabels:
+      component: ftps
+  template:
+    metadata:
+      labels:
+        component: ftps
+    spec:
+      containers:
+      - name: ftps
+        image: mkamei/ftps
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 21
+          containerPort: 50001
+          containerPort: 50002
+          containerPort: 50003
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ftps
+  annotations:
+    metallb.universe.tf/allow-shared-ip: sharing.key
+spec:
+  type: LoadBalancer
+  selector:
+    component: ftps
+  ports:
+  - name: http
+    protocol: TCP
+    port: 21
+    targetPort: 21
+  - name: ftp1
+    protocol: TCP
+    port: 50001
+    targetPort: 50001
+  - name: ftp2
+    protocol: TCP
+    port: 50002
+    targetPort: 50002
+  - name: ftp3
+    protocol: TCP
+    port: 50003
+    targetPort: 50003
