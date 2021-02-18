@@ -1,32 +1,32 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mysql
+  name: influxdb
   labels:
-    component: mysql
+    component: influxdb
 spec:
   replicas: 1
   selector:
     matchLabels:
-      component: mysql
+      component: influxdb
   serviceName: mysql
   template:
     metadata:
       labels:
-        component: mysql
+        component: influxdb
     spec:
       containers:
-      - name: mysql
-        image: mkamei/mysql
+      - name: influxdb
+        image: mkamei/influxdb
         imagePullPolicy: Never
         ports:
-        - containerPort: 3306
+        - containerPort: 8086
         volumeMounts:
-        - name: mysql-pv
+        - name: influxdb-pv
           mountPath: /data
   volumeClaimTemplates:
   - metadata:
-      name: mysql-pv
+      name: influxdb-pv
     spec:
       accessModes: ["ReadWriteOnce"]
       resources:
@@ -36,13 +36,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql
+  name: influxdb
 spec:
   type: ClusterIP
   selector:
-    component: mysql
+    component: influxdb
   ports:
     - name: http
       protocol: TCP
-      port: 3306
-      targetPort: 3306
+      port: 8086
+      targetPort: 8086

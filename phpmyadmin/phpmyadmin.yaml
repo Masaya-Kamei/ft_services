@@ -5,6 +5,7 @@ metadata:
   labels:
     component: phpmyadmin
 spec:
+  replicas: 1
   selector:
     matchLabels:
       component: phpmyadmin
@@ -18,7 +19,19 @@ spec:
         image: mkamei/phpmyadmin
         imagePullPolicy: Never
         ports:
-        - containerPort: 5000
+        - containerPort: 443
+        volumeMounts:
+        - name: docker-volume
+          mountPath: /var/run/docker.sock
+        - name: secret-volume
+          mountPath: /secrets
+      volumes:
+      - name: docker-volume
+        hostPath:
+          path: /var/run/docker.sock
+      - name: secret-volume
+        secret:
+          secretName: secret-data
 ---
 apiVersion: v1
 kind: Service
@@ -33,4 +46,4 @@ spec:
   ports:
   - protocol: TCP
     port: 5000
-    targetPort: 5000
+    targetPort: 443

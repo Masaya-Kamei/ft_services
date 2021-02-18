@@ -1,10 +1,9 @@
-FROM	alpine:latest
+FROM	alpine:3.13.1
 
-RUN	set -ex; \
-	apk update; \
-	apk add --no-cache \
-		vim openrc vsftpd; \
-	rm -rf /var/cache/apk/*
+RUN		set -ex; \
+		apk update; \
+		apk add --no-cache vim openrc vsftpd; \
+		rm -rf /var/cache/apk/*
 
 RUN     set -ex; \
         sed -i -e '275 s/cgroup_add_service/#cgroup_add_service/' /lib/rc/sh/openrc-run.sh; \
@@ -24,11 +23,10 @@ RUN     set -ex; \
         cp /etc/passwd /tmp/ftpuser/ftp_root; \
         chown ftpuser:ftpuser /tmp/ftpuser/ftp_root
 
-WORKDIR /
 COPY	./srcs/vsftpd.conf /etc/vsftpd/vsftpd.conf
 COPY	./srcs/entrypoint.sh /usr/bin/
-RUN	set -ex; \
-	chmod +r /etc/vsftpd/vsftpd.conf; \ 
-	chmod +x /usr/bin/entrypoint.sh
+RUN		set -ex; \
+		chmod +r /etc/vsftpd/vsftpd.conf; \
+		chmod +x /usr/bin/entrypoint.sh
 
-ENTRYPOINT	["sh", "/usr/bin/entrypoint.sh"]
+ENTRYPOINT	["entrypoint.sh"]

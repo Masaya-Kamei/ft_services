@@ -1,4 +1,4 @@
-FROM	alpine:latest
+FROM	alpine:3.13.1
 
 RUN		set -ex; \
 		apk update; \
@@ -16,20 +16,20 @@ RUN     set -ex; \
 
 WORKDIR	/var/www/html/
 RUN		set -ex; \
-		wget https://wordpress.org/latest.tar.gz; \
-		tar -xvzf latest.tar.gz; \
-		rm latest.tar.gz; \
+		wget https://ja.wordpress.org/wordpress-5.6.1-ja.tar.gz; \
+		tar -xvzf wordpress-5.6.1-ja.tar.gz; \
+		rm wordpress-5.6.1-ja.tar.gz; \
 		chown -R nginx:nginx /var/www/html/wordpress
 
 WORKDIR /
-COPY	./srcs/default.conf /etc/nginx/conf.d/default.conf
+COPY	./srcs/nginx.conf /etc/nginx/conf.d/default.conf
+COPY	./srcs/php-fpm.conf /etc/php7/php-fpm.d/www.conf
 COPY	./srcs/wp-config.php /var/www/html/wordpress/
-COPY	./srcs/www.conf /etc/php7/php-fpm.d/www.conf
 COPY	./srcs/entrypoint.sh /usr/bin/
 RUN		set -ex; \
 		chmod +r /etc/nginx/conf.d/default.conf; \
-		chmod +r /var/www/html/wordpress/wp-config.php; \
 		chmod +r /etc/php7/php-fpm.d/www.conf; \
+		chmod +r /var/www/html/wordpress/wp-config.php; \
 		chmod +x /usr/bin/entrypoint.sh
 
-ENTRYPOINT	["sh", "/usr/bin/entrypoint.sh"]
+ENTRYPOINT	["entrypoint.sh"]

@@ -1,4 +1,4 @@
-FROM	alpine:latest
+FROM	alpine:3.13.1
 
 RUN	set -ex; \
 	apk update; \
@@ -22,14 +22,16 @@ RUN     set -ex; \
         mv phpMyAdmin-5.0.4-all-languages phpmyadmin
 
 WORKDIR /
-COPY	./srcs/default.conf /etc/nginx/conf.d/default.conf
-COPY	./srcs/www.conf /etc/php7/php-fpm.d/www.conf
+COPY	./srcs/nginx.conf /etc/nginx/conf.d/default.conf
+COPY	./srcs/php-fpm.conf /etc/php7/php-fpm.d/www.conf
 COPY	./srcs/config.inc.php /var/www/html/phpmyadmin/config.inc.php
-RUN	rm /var/www/html/phpmyadmin/config.sample.inc.php
+# RUN		rm /var/www/html/phpmyadmin/config.sample.inc.php
 COPY	./srcs/entrypoint.sh /usr/bin/
-RUN	set -ex; \
-	chmod +r /etc/nginx/conf.d/default.conf; \
-	chmod +r /etc/php7/php-fpm.d/www.conf; \
-	chmod +x /usr/bin/entrypoint.sh
+RUN		set -ex; \
+		chmod +r /etc/nginx/conf.d/default.conf; \
+		chmod +r /etc/php7/php-fpm.d/www.conf; \
+		chmod +r /var/www/html/phpmyadmin/config.inc.php; \
+		chmod +x /usr/bin/entrypoint.sh
 
-ENTRYPOINT	["sh", "/usr/bin/entrypoint.sh"]
+ENTRYPOINT     ["entrypoint.sh"]
+

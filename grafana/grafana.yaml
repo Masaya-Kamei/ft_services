@@ -1,34 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: wordpress
+  name: grafana
   labels:
-    component: wordpress
+    component: grafana
 spec:
   replicas: 1
   selector:
     matchLabels:
-      component: wordpress
+      component: grafana
   template:
     metadata:
       labels:
-        component: wordpress
+        component: grafana
     spec:
       containers:
-      - name: wordpress
-        image: mkamei/wordpress
+      - name: grafana
+        image: mkamei/grafana
         imagePullPolicy: Never
         ports:
-        - containerPort: 443
+        - containerPort: 3000
         volumeMounts:
-        - name: docker-volume
-          mountPath: /var/run/docker.sock
         - name: secret-volume
           mountPath: /secrets
       volumes:
-      - name: docker-volume
-        hostPath:
-          path: /var/run/docker.sock
       - name: secret-volume
         secret:
           secretName: secret-data
@@ -36,15 +31,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: wordpress
+  name: grafana
   annotations:
     metallb.universe.tf/allow-shared-ip: sharing.key
 spec:
   type: LoadBalancer
   selector:
-    component: wordpress
+    component: grafana
   ports:
-  - name: https
+  - name: http
     protocol: TCP
-    port: 5050
-    targetPort: 443
+    port: 3000
+    targetPort: 3000

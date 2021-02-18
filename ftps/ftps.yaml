@@ -5,6 +5,7 @@ metadata:
   labels:
     component: ftps
 spec:
+  replicas: 1
   selector:
     matchLabels:
       component: ftps
