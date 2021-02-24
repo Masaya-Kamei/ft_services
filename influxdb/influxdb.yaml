@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       component: influxdb
-  serviceName: mysql
+  serviceName: influxdb
   template:
     metadata:
       labels:
@@ -21,6 +21,15 @@ spec:
         imagePullPolicy: Never
         ports:
         - containerPort: 8086
+        env:
+        - name: INFLUXUSER_PASS
+          valueFrom:
+            secretKeyRef:
+              name: service-secret
+              key: INFLUXUSER_PASS
+        livenessProbe:
+          exec:
+            command: ["healthcheck.sh"]
         volumeMounts:
         - name: influxdb-pv
           mountPath: /data
@@ -42,7 +51,7 @@ spec:
   selector:
     component: influxdb
   ports:
-    - name: http
+    - name: db
       protocol: TCP
       port: 8086
       targetPort: 8086

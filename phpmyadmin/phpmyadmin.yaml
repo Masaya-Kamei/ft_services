@@ -20,18 +20,16 @@ spec:
         imagePullPolicy: Never
         ports:
         - containerPort: 443
+        livenessProbe:
+          exec:
+            command: ["healthcheck.sh"]
         volumeMounts:
-        - name: docker-volume
-          mountPath: /var/run/docker.sock
-        - name: secret-volume
+        - name: cert-volume
           mountPath: /secrets
       volumes:
-      - name: docker-volume
-        hostPath:
-          path: /var/run/docker.sock
-      - name: secret-volume
+      - name: cert-volume
         secret:
-          secretName: secret-data
+          secretName: cert-secret
 ---
 apiVersion: v1
 kind: Service
@@ -44,6 +42,7 @@ spec:
   selector:
     component: phpmyadmin
   ports:
-  - protocol: TCP
+  - name: https
+    protocol: TCP
     port: 5000
     targetPort: 443

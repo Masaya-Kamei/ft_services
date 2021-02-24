@@ -1,6 +1,6 @@
 #!/bin/ash
 
-rc-service php-fpm7 start
-rc-service nginx start
+# WP_CONF_PATH=/var/www/html/wordpress
+# envsubst '$${MYSQLUSER_PASS}' < ${WP_CONF_PATH}/wp-config.php.tmpl > ${WP_CONF_PATH}/wp-config.php
 
-tail -f /dev/null
+supervisord -c /etc/supervisord.conf

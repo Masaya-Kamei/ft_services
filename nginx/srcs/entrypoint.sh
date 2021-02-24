@@ -1,6 +1,11 @@
 #!/bin/ash
 
-rc-service nginx start
-rc-service sshd start
+NGINX_CONF_PATH=/etc/nginx/conf.d
+envsubst '$${SERVICE_IP}' < ${NGINX_CONF_PATH}/default.conf.tmpl > ${NGINX_CONF_PATH}/default.conf
 
-telegraf --config /home/telegraf/etc/telegraf/telegraf.conf
+TELEGRAF_CONF_PATH=/home/telegraf/etc/telegraf
+envsubst '$${INFLUXUSER_PASS}' < ${TELEGRAF_CONF_PATH}/telegraf.conf.tmpl > ${TELEGRAF_CONF_PATH}/telegraf.conf
+
+echo "nginxuser:${NGINXUSER_PASS}" | chpasswd
+
+supervisord -c /etc/supervisord.conf

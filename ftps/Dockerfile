@@ -2,7 +2,8 @@ FROM	alpine:3.13.1
 
 RUN		set -ex; \
 		apk update; \
-		apk add --no-cache vim openrc vsftpd; \
+		apk add --no-cache vim openrc vsftpd supervisor gettext; \
+		mkdir /var/log/supervisord; \
 		rm -rf /var/cache/apk/*
 
 RUN     set -ex; \
@@ -12,21 +13,21 @@ RUN     set -ex; \
         rc-status
 
 RUN     set -ex; \
-        adduser ftpuser -D; \
-        echo 'ftpuser:ftppass' | chpasswd; \
-        echo ftpuser > /etc/vsftpd/user_list; \
+        adduser ftpsuser -D; \
+        echo ftpsuser > /etc/vsftpd/user_list; \
         touch /etc/vsftpd/chroot_list; \
-        mkdir /etc/vsftpd/chroot_user_conf; \
-        echo local_root=/tmp/ftpuser > /etc/vsftpd/chroot_user_conf/ftpuser; \
-        mkdir /tmp/ftpuser; \
-        mkdir /tmp/ftpuser/ftp_root; \
-        cp /etc/passwd /tmp/ftpuser/ftp_root; \
-        chown ftpuser:ftpuser /tmp/ftpuser/ftp_root
+        mkdir /etc/vsftpd/user_conf; \
+        echo local_root=/home > /etc/vsftpd/user_conf/ftpsuser; \
+        echo -e "Hello\nHello\nHello" > /home/ftpsuser/hello.txt
 
-COPY	./srcs/vsftpd.conf /etc/vsftpd/vsftpd.conf
+COPY	./srcs/vsftpd.conf.tmpl /etc/vsftpd/vsftpd.conf.tmpl
+COPY	./srcs/supervisord.conf /etc/
+COPY	./srcs/healthcheck.sh /usr/bin/
 COPY	./srcs/entrypoint.sh /usr/bin/
 RUN		set -ex; \
-		chmod +r /etc/vsftpd/vsftpd.conf; \
+		chmod +r /etc/vsftpd/vsftpd.conf.tmpl; \
+		chmod +r /etc/supervisord.conf; \
+		chmod +x /usr/bin/healthcheck.sh; \
 		chmod +x /usr/bin/entrypoint.sh
 
 ENTRYPOINT	["entrypoint.sh"]

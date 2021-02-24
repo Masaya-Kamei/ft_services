@@ -1,5 +1,3 @@
-set -ex
-
 kubectl delete -f "$1"/"$1".yaml
 
 if [ "$2" = "no" ]; then

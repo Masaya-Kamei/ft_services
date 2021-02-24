@@ -26,7 +26,7 @@ server {
 	}
 
 	location /wordpress {
-		return 307 https://192.168.49.10:5050;
+		return 307 https://${SERVICE_IP}:5050;
 	}
 
 	location /phpmyadmin/ {

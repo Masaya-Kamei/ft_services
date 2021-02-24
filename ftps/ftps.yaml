@@ -23,6 +23,20 @@ spec:
           containerPort: 50001
           containerPort: 50002
           containerPort: 50003
+        env:
+        - name: SERVICE_IP
+          valueFrom:
+            configMapKeyRef:
+              name: service-cm
+              key: SERVICE_IP
+        - name: FTPSUSER_PASS
+          valueFrom:
+            secretKeyRef:
+              name: service-secret
+              key: FTPSUSER_PASS
+        livenessProbe:
+          exec:
+            command: ["healthcheck.sh"]
 ---
 apiVersion: v1
 kind: Service
@@ -35,7 +49,7 @@ spec:
   selector:
     component: ftps
   ports:
-  - name: http
+  - name: ftp
     protocol: TCP
     port: 21
     targetPort: 21

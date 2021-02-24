@@ -2,7 +2,8 @@ FROM	alpine:3.13.1
 
 RUN		set -ex; \
 		apk update; \
-		apk add --no-cache vim wget supervisor; \
+		apk add --no-cache vim wget supervisor gettext; \
+		mkdir /var/log/supervisord; \
 		rm -rf /var/cache/apk/*
 
 WORKDIR /home
@@ -19,14 +20,18 @@ RUN     set -ex; \
 WORKDIR /
 COPY	./srcs/dashboards.yaml /home/grafana/conf/provisioning/dashboards/
 COPY	./srcs/ft_services.json /home/grafana/data/dashboards/
-COPY	./srcs/datasources.yaml /home/grafana/conf/provisioning/datasources/
-COPY	./srcs/grafana.ini /home/grafana/conf/defaults.ini
-COPY	./srcs/supervisord.conf /etc/supervisord.conf
+COPY	./srcs/datasources.yaml.tmpl /home/grafana/conf/provisioning/datasources/
+COPY	./srcs/grafana.ini.tmpl /home/grafana/conf/defaults.ini.tmpl
+COPY	./srcs/supervisord.conf /etc/
+COPY	./srcs/healthcheck.sh /usr/bin/
+COPY	./srcs/entrypoint.sh /usr/bin/
 RUN		set -ex; \
         chmod +r /home/grafana/conf/provisioning/dashboards/dashboards.yaml; \
         chmod +r /home/grafana/data/dashboards/ft_services.json; \
-        chmod +r /home/grafana/conf/provisioning/datasources/datasources.yaml; \
-        chmod +r /home/grafana/conf/defaults.ini; \
-        chmod +r /etc/supervisord.conf
+        chmod +r /home/grafana/conf/provisioning/datasources/datasources.yaml.tmpl; \
+        chmod +r /home/grafana/conf/defaults.ini.tmpl; \
+        chmod +r /etc/supervisord.conf; \
+		chmod +x /usr/bin/healthcheck.sh; \
+		chmod +x /usr/bin/entrypoint.sh
 
-ENTRYPOINT	["supervisord","-c","/etc/supervisord.conf"]
+ENTRYPOINT	["entrypoint.sh"]

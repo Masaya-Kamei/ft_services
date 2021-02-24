@@ -59,7 +59,7 @@
 
   ## Name of the file to be logged to when using the "file" logtarget.  If set to
   ## the empty string then logs are written to stderr.
-  # logfile = ""
+  logfile = "/home/telegraf/var/log/telegraf/telegraf.log"
 
   ## The logfile will be rotated after the time interval specified.  When set
   ## to 0 no time based rotation is performed.  Logs are rotated only when
@@ -97,7 +97,7 @@
 
   ## The target database for metrics; will be created as needed.
   ## For UDP url endpoint database needs to be configured on server side.
-  database = "dbname"
+  database = "influxname"
 
   ## The value of this tag will be used to determine the database.  If this
   ## tag is not set the 'database' option is used as the default.
@@ -130,8 +130,8 @@
   # timeout = "5s"
 
   ## HTTP Basic Auth
-  username = "dbuser"
-  password = "dbpassword"
+  username = "influxuser"
+  password = "${INFLUXUSER_PASS}"
 
   ## HTTP User-Agent
   # user_agent = "telegraf"

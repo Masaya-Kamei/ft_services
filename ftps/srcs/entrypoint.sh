@@ -1,5 +1,8 @@
 #!/bin/ash
 
-rc-service vsftpd start
+FTP_CONF_PATH=/etc/vsftpd
+envsubst '$${SERVICE_IP}' < ${FTP_CONF_PATH}/vsftpd.conf.tmpl > ${FTP_CONF_PATH}/vsftpd.conf
 
-tail -f /dev/null
+echo "ftpsuser:${FTPSUSER_PASS}" | chpasswd
+
+supervisord -c /etc/supervisord.conf

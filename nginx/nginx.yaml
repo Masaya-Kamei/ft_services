@@ -22,13 +22,37 @@ spec:
         - containerPort: 80
           containerPort: 443
           containerPort: 22
+        env:
+        - name: SERVICE_IP
+          valueFrom:
+            configMapKeyRef:
+              name: service-cm
+              key: SERVICE_IP
+        - name: NGINXUSER_PASS
+          valueFrom:
+            secretKeyRef:
+              name: service-secret
+              key: NGINXUSER_PASS
+        - name: INFLUXUSER_PASS
+          valueFrom:
+            secretKeyRef:
+              name: service-secret
+              key: INFLUXUSER_PASS
+        livenessProbe:
+          exec:
+            command: ["healthcheck.sh"]
         volumeMounts:
-        - name: secret-volume
+        - name: docker-volume
+          mountPath: /var/run/docker.sock
+        - name: cert-volume
           mountPath: /secrets
       volumes:
-      - name: secret-volume
+      - name: docker-volume
+        hostPath:
+          path: /var/run/docker.sock
+      - name: cert-volume
         secret:
-          secretName: secret-data
+          secretName: cert-secret
 ---
 apiVersion: v1
 kind: Service
