@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: influxdb
+  labels:
+    component: influxdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: influxdb
+  serviceName: influxdb
+  template:
+    metadata:
+      labels:
+        component: influxdb
+    spec:
+      containers:
+      - name: influxdb
+        image: mkamei/influxdb
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8086
+        env:
+        - name: INFLUXUSER_PASS
+          valueFrom:
+            secretKeyRef:
+              name: service-secret
+              key: INFLUXUSER_PASS
+        livenessProbe:
+          exec:
+            command: ["healthcheck.sh"]
+          initialDelaySeconds: 30
+        volumeMounts:
+        - name: influxdb-pv
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: influxdb-pv
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: influxdb
+spec:
+  type: ClusterIP
+  selector:
+    component: influxdb
+  ports:
+    - name: db
+      protocol: TCP
+      port: 8086
+      targetPort: 8086

@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  labels:
+    component: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: grafana
+  template:
+    metadata:
+      labels:
+        component: grafana
+    spec:
+      containers:
+      - name: grafana
+        image: mkamei/grafana
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3000
+        env:
+        - name: GRAFANAUSER_PASS
+          valueFrom:
+            secretKeyRef:
+              name: service-secret
+              key: GRAFANAUSER_PASS
+        - name: INFLUXUSER_PASS
+          valueFrom:
+            secretKeyRef:
+              name: service-secret
+              key: INFLUXUSER_PASS
+        livenessProbe:
+          exec:
+            command: ["healthcheck.sh"]
+          initialDelaySeconds: 30
+        volumeMounts:
+        - name: cert-volume
+          mountPath: /secrets
+      volumes:
+      - name: cert-volume
+        secret:
+          secretName: cert-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  annotations:
+    metallb.universe.tf/allow-shared-ip: sharing.key
+spec:
+  type: LoadBalancer
+  selector:
+    component: grafana
+  ports:
+  - name: https
+    protocol: TCP
+    port: 3000
+    targetPort: 3000

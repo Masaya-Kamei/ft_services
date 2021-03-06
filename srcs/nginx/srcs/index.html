@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<title>ft_services</title>
+</head>
+
+<body>
+
+<h1>ft_services</h1>
+<h3>[kubectl コマンド]</h3>
+<ul>
+	<li>ポットの確認:	kubectl get pod</li>
+	<li>ポットの削除:	kubectl delete pod [pod名]</li>
+	<li>サービスの確認:	kubectl get service</li>
+</ul>
+
+<h3>[nginx]</h3>
+<ul>
+	<li><a href="https://192.168.1.1">https://192.168.1.1</a></li>
+	<li><a href="https://192.168.1.1/wordpress">https://192.168.1.1/wordpress</a></li>
+	<li><a href="https://192.168.1.1/phpmyadmin">https://192.168.1.1/phpmyadmin</a></li>
+	<li>ssh nginxuser@192.168.1.1 <br> Password: nginxpass</li>
+</ul>
+
+<h3>[wordpress]</h3>
+<ul>
+	<li><a href="https://192.168.1.1:5050">https://192.168.1.1:5050</a>
+		<br>User: wpuser, Password: wppass</li>
+</ul>
+
+<h3>[phpmyadmin]</h3>
+<ul>
+	<li><a href="https://192.168.1.1:5000">https://192.168.1.1:5000</a>
+		<br>User: mysqluser, Password: mysqlpass</li>
+</ul>
+
+<h3>[grafana]</h3>
+<ul>
+	<li><a href="https://192.168.1.1:3000">https://192.168.1.1:3000</a>
+		<br>User: grafanauser, Password: grafanapass</li>
+</ul>
+
+<h3>[ftps]</h3>
+<ul>
+	<li>lftp ftpsuser@192.168.1.1 <br>Password: ftpspass</li>
+</ul>
+<pre>
+	<code>
+	・対話モード　コマンド
+		set ssl:verify-certificate no
+		cd ftpsuser
+		ls
+		!ls
+		get hello.txt
+		put [file名]
+	</code>
+</pre>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  labels:
+    component: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: mysql
+  serviceName: mysql
+  template:
+    metadata:
+      labels:
+        component: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mkamei/mysql
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQLUSER_PASS
+          valueFrom:
+            secretKeyRef:
+              name: service-secret
+              key: MYSQLUSER_PASS
+        livenessProbe:
+          exec:
+            command: ["healthcheck.sh"]
+          initialDelaySeconds: 30
+        volumeMounts:
+        - name: mysql-pv
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-pv
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  type: ClusterIP
+  selector:
+    component: mysql
+  ports:
+    - name: db
+      protocol: TCP
+      port: 3306
+      targetPort: 3306

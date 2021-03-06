@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ftps
+  labels:
+    component: ftps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: ftps
+  template:
+    metadata:
+      labels:
+        component: ftps
+    spec:
+      containers:
+      - name: ftps
+        image: mkamei/ftps
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 21
+          containerPort: 50001
+          containerPort: 50002
+          containerPort: 50003
+        env:
+        - name: SERVICE_IP
+          valueFrom:
+            configMapKeyRef:
+              name: service-cm
+              key: SERVICE_IP
+        - name: FTPSUSER_PASS
+          valueFrom:
+            secretKeyRef:
+              name: service-secret
+              key: FTPSUSER_PASS
+        livenessProbe:
+          exec:
+            command: ["healthcheck.sh"]
+          initialDelaySeconds: 30
+        volumeMounts:
+        - name: cert-volume
+          mountPath: /secrets
+      volumes:
+       - name: cert-volume
+         secret:
+           secretName: cert-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ftps
+  annotations:
+    metallb.universe.tf/allow-shared-ip: sharing.key
+spec:
+  type: LoadBalancer
+  selector:
+    component: ftps
+  ports:
+  - name: ftp
+    protocol: TCP
+    port: 21
+    targetPort: 21
+  - name: ftp1
+    protocol: TCP
+    port: 50001
+    targetPort: 50001
+  - name: ftp2
+    protocol: TCP
+    port: 50002
+    targetPort: 50002
+  - name: ftp3
+    protocol: TCP
+    port: 50003
+    targetPort: 50003
