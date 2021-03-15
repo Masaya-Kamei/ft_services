@@ -1,0 +1,5 @@
+srcs/cert/server.crt
+srcs/cert/server.key
+srcs/config/metallb-config.yaml
+srcs/config/service-cm.yaml
+

@@ -6,15 +6,14 @@ cd srcs
 OS=`uname`
 if [ ${OS} = "Linux" ]; then
 	minikube start
-	SERVICE_IP=`minikube ip | sed -r 's/192\.168\.([0-9]{1,3})\.[0-9]{1,3}/192.168.\1.100/'`
-	sed -i -r "s/192\.168\.[0-9]{1,3}\.[0-9]{1,3}/${SERVICE_IP}/g" config/metallb-config.yaml
-	sed -i -r "s/SERVICE_IP:.*/SERVICE_IP: ${SERVICE_IP}/" config/service-cm.yaml
 else
 	minikube start --driver=hyperkit
-	SERVICE_IP=`minikube ip | sed -r 's/192\.168\.([0-9]{1,3})\.[0-9]{1,3}/192.168.\1.100/'`
-	gsed -i -r "s/192\.168\.[0-9]{1,3}\.[0-9]{1,3}/${SERVICE_IP}/g" config/metallb-config.yaml
-	gsed -i -r "s/SERVICE_IP:.*/SERVICE_IP: ${SERVICE_IP}/" config/service-cm.yaml
 fi
+
+SERVICE_IP=`minikube ip | sed -r 's/192\.168\.([0-9]{1,3})\.[0-9]{1,3}/192.168.\1.100/'`
+export SERVICE_IP
+envsubst '$$SERVICE_IP' < config/metallb-config.yaml.tmpl > config/metallb-config.yaml
+envsubst '$$SERVICE_IP' < config/service-cm.yaml.tmpl > config/service-cm.yaml
 
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/namespace.yaml
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml
