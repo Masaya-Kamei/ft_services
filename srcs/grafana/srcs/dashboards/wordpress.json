@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1614938761529,
+  "iteration": 1617270228134,
   "links": [],
   "panels": [
     {
@@ -562,7 +562,6 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "tags": [],
           "text": [
             "All"
           ],
@@ -598,7 +597,7 @@
     "to": "now"
   },
   "timepicker": {},
-  "timezone": "",
+  "timezone": "Asia/Tokyo",
   "title": "Wordpress",
   "uid": "wordpress",
   "version": 1

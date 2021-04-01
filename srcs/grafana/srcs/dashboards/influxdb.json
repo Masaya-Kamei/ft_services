@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1614997583865,
+  "iteration": 1617270106332,
   "links": [],
   "panels": [
     {
@@ -530,7 +530,6 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "tags": [],
           "text": [
             "All"
           ],
@@ -563,7 +562,6 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "tags": [],
           "text": [
             "All"
           ],
@@ -599,7 +597,7 @@
     "to": "now"
   },
   "timepicker": {},
-  "timezone": "",
+  "timezone": "Asia/Tokyo",
   "title": "InfluxDB",
   "uid": "influxdb",
   "version": 1

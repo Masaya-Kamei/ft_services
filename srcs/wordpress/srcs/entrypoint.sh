@@ -11,8 +11,8 @@ if ! $(wp core is-installed --path=/var/www/html/wordpress); then
     done
 	wp core install --path=/var/www/html/wordpress --url=https://${SERVICE_IP}:5050 --title=wptitle --admin_user=wpuser --admin_password=${WPUSER_PASS} --admin_email=wpemail@example.com --skip-email
 	wp widget add meta sidebar-1 2 --path=/var/www/html/wordpress
-	wp user create wpuser2 --user_pass=wpuserpass2 wpemail2@example.com --role=editor --path=/var/www/html/wordpress
-	wp user create wpuser3 --user_pass=wpuserpass3 wpemail3@example.com --role=author --path=/var/www/html/wordpress
+	wp user create wpuser2 --user_pass=wppass2 wpemail2@example.com --role=editor --path=/var/www/html/wordpress
+	wp user create wpuser3 --user_pass=wppass3 wpemail3@example.com --role=author --path=/var/www/html/wordpress
 	rc-service nginx stop
 fi
 

@@ -1,11 +1,11 @@
-#!/bin/sh
+#!/bin/zsh
 
 set -ex
 cd srcs
 
 OS=`uname`
 if [ ${OS} = "Linux" ]; then
-	minikube start
+	minikube start --driver=docker
 else
 	minikube start --driver=hyperkit
 fi

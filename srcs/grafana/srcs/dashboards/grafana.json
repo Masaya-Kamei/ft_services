@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1614997583861,
+  "iteration": 1617269668787,
   "links": [],
   "panels": [
     {
@@ -530,7 +530,6 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "tags": [],
           "text": [
             "All"
           ],
@@ -563,7 +562,6 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "tags": [],
           "text": [
             "All"
           ],
@@ -599,7 +597,7 @@
     "to": "now"
   },
   "timepicker": {},
-  "timezone": "",
+  "timezone": "Asia/Tokyo",
   "title": "Grafana",
   "uid": "grafana",
   "version": 1

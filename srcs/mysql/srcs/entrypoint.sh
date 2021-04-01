@@ -13,9 +13,9 @@ if [ ! -d /data/mysql ]; then
         sleep 0.1
     done
 	mysql -u root <<- EOSQL
-		CREATE DATABASE mysqlname;
+		CREATE DATABASE wordpress_db;
 		CREATE USER 'mysqluser'@'%' identified by '${MYSQLUSER_PASS}';
-		GRANT ALL PRIVILEGES ON mysqlname.* TO 'mysqluser'@'%';
+		GRANT ALL PRIVILEGES ON wordpress_db.* TO 'mysqluser'@'%';
 	EOSQL
 	rc-service mariadb stop
 fi
