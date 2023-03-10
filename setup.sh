@@ -15,10 +15,16 @@ export SERVICE_IP
 envsubst '$$SERVICE_IP' < config/metallb-config.yaml.tmpl > config/metallb-config.yaml
 envsubst '$$SERVICE_IP' < config/service-cm.yaml.tmpl > config/service-cm.yaml
 
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/namespace.yaml
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml
-kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
-kubectl apply -f config/metallb-config.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml
+# https://github.com/metallb/metallb/issues/1597
+for i in {1..20}; do
+	kubectl apply -f config/metallb-config.yaml && break
+	sleep 5
+	if [ $i -eq 20 ]; then
+		echo "Failed to apply metallb config"
+		exit 1
+	fi
+done
 
 kubectl apply -f config/service-cm.yaml
 kubectl apply -f config/service-secret.yaml
