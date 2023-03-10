@@ -1,4 +1,10 @@
 apiVersion: apps/v1
+# [StatefulSet]
+# 状態を保持する(ステートフルな)アプリケーションを管理するためのオブジェクト
+# イメージ的には、PodTemplateを持つDeployment＋PVC
+# [PVC (Persistent Volume Claim)]
+# 永続化ボリュームの利用請求をするオブジェクト
+# 永続化ボリュームの構成 [PersisitentVolumeClaim [PersistentVolume [StorageClass]]]
 kind: StatefulSet
 metadata:
   name: influxdb
@@ -31,6 +37,8 @@ spec:
           exec:
             command: ["healthcheck.sh"]
           initialDelaySeconds: 30
+        # volume ：MinikubeのVM内のディレクトリを、コンテナ内にマウント
+        # マウントするディレクトリにデータがある場合、volumeのデータで上書きされる
         volumeMounts:
         - name: influxdb-pv
           mountPath: /data

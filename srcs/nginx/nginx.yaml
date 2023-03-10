@@ -46,7 +46,9 @@ spec:
         - name: docker-volume
           mountPath: /var/run/docker.sock
         - name: cert-volume
-          mountPath: /secrets
+		  mountPath: /secrets
+	  # minikubeのVM内の docker.sock をマウント
+	  # telegrafを使用して、ホストで実行されている全てのコンテナのメトリックを収集できる
       volumes:
       - name: docker-volume
         hostPath:

@@ -1,3 +1,15 @@
+# -----------------------------------------------------------------------------
+# Mysql
+# [変更点]
+# ・dbデータの保存ディレクトリを変更
+#	datadir=/data/mysql
+# ・外部からの接続を許可する
+	skip-networking=0
+	skip-bind-address
+# ・!inlcudedir /etc/my.cnf.d をコメントアウト
+　　 /etc/my.cnf.d/mariadb-server.cnf 内の skip-networking で外部からの接続を無効にしてある
+# -----------------------------------------------------------------------------
+
 # This group is read both both by the client and the server
 # use it for options that affect everything
 [client-server]

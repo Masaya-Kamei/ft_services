@@ -2,27 +2,30 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ftps
+  # deploymentのラベルを設定
   labels:
     component: ftps
 spec:
   replicas: 1
   selector:
+  # マッチするpodのラベルを指定
     matchLabels:
       component: ftps
   template:
     metadata:
+      # podのラベルを設定
       labels:
         component: ftps
     spec:
       containers:
       - name: ftps
         image: mkamei/ftps
-        imagePullPolicy: Never
+        imagePullPolicy: Never  # DockerHubではなく、ローカルのimageを使用
         ports:
         - containerPort: 21
-          containerPort: 50001
-          containerPort: 50002
-          containerPort: 50003
+        - containerPort: 50001
+        - containerPort: 50002
+        - containerPort: 50003
         env:
         - name: SERVICE_IP
           valueFrom:
@@ -34,13 +37,17 @@ spec:
             secretKeyRef:
               name: service-secret
               key: FTPSUSER_PASS
+        # ヘルスチェックを設定、healthcheck.sh の終了コードで判断
         livenessProbe:
           exec:
             command: ["healthcheck.sh"]
-          initialDelaySeconds: 30
+            # ヘルスチェックの開始を30秒後に設定
+            initialDelaySeconds: 30
+      # volumeをコンテナに割り当てる
         volumeMounts:
         - name: cert-volume
           mountPath: /secrets
+      # volumeを作成
       volumes:
        - name: cert-volume
          secret:
@@ -51,6 +58,7 @@ kind: Service
 metadata:
   name: ftps
   annotations:
+    # MetallbによるサービスのIPが同じになるのを許可
     metallb.universe.tf/allow-shared-ip: sharing.key
 spec:
   type: LoadBalancer
@@ -59,7 +67,9 @@ spec:
   ports:
   - name: ftp
     protocol: TCP
+    # 外部から受け入れるportを設定
     port: 21
+    # コンテナに通すportを設定
     targetPort: 21
   - name: ftp1
     protocol: TCP

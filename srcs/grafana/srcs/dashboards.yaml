@@ -8,4 +8,6 @@ providers:
   disableDeletion: true
   editable: true
   options:
+  # dashboardsのjsonファイルを置くpath
+  # jsonファイルの uid は一意である必要がある
     path: /tmp/grafana/data/dashboards

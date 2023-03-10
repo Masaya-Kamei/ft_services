@@ -12,9 +12,13 @@ RUN     set -ex; \
         tar -zxvf grafana-7.4.1.linux-amd64.tar.gz; \
         mv grafana-7.4.1 grafana; \
         rm grafana-7.4.1.linux-amd64.tar.gz; \
+		# go言語で作られたバイナリ(hugo)を実行すると、not found というエラー
+		# ldd コマンドを実行すると、依存関係が確認できる
+		# muslとglibcは互換性があるため、シンボリックリンクを作成して依存関係を解消
 		mkdir /lib64; \
 		ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2; \
 		cp grafana/bin/grafana-server /usr/bin/; \
+		# homeのダッシュボードに、search (dashboardの一覧) を表示
 		sed -i -e 's/"search": false/"search": true/' /tmp/grafana/public/dashboards/home.json
 
 WORKDIR /

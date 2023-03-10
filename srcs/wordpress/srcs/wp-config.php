@@ -1,4 +1,13 @@
 <?php
+/*****************************************************************
+ * Wordpress
+ * [変更点]
+ * define( 'DB_NAME', 'mysqlname' );
+ * define( 'DB_USER', 'mysqluser' );
+ * define( 'DB_PASSWORD', getenv('MYSQLUSER_PASS') );
+ * define( 'DB_HOST', 'mysql' );
+******************************************************************/
+
 /**
  * The base configuration for WordPress
  *

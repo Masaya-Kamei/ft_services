@@ -14,6 +14,7 @@ RUN     set -ex; \
 
 RUN     set -ex; \
         adduser nginxuser -D; \
+		# ssh(公開鍵)による接続ではなく、パスワードによる接続にする
         sed -i -e 's/#\(PasswordAuthentication yes\)/\1/g' /etc/ssh/sshd_config
 
 WORKDIR /tmp

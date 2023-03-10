@@ -21,6 +21,8 @@ RUN		set -ex; \
 		rm wordpress-5.6.1-ja.tar.gz; \
 		chown -R nginx:nginx /var/www/html/wordpress
 
+# wp コマンドをインストール
+# wp-cli :wordpress をコマンドラインで操作するツール
 WORKDIR /
 RUN		set -ex; \
 		wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar; \
@@ -34,7 +36,11 @@ COPY	./srcs/supervisord.conf /etc/
 COPY	./srcs/healthcheck.sh /usr/bin/
 COPY	./srcs/entrypoint.sh /usr/bin/
 RUN		set -ex; \
+		# rc-service は環境変数を引き継がない、rc-service で使う環境変数を設定
 		sed -i -r "s/#(rc_env_allow=)\".*\"/\1\"MYSQLUSER_PASS\"/" /etc/rc.conf; \
+		# nginx の perl_module を使用して、環境変数をnginxで展開する
+		# /i 指定した行の上に挿入する
+		# /a 指定した行の下に挿入する
 		sed -i -r "/http \{/i env MYSQLUSER_PASS;\n" /etc/nginx/nginx.conf; \
 		sed -i -r "/http \{/a \        perl_set \$MYSQLUSER_PASS \'sub { return \$ENV{\"MYSQLUSER_PASS\"}; }\';\n" /etc/nginx/nginx.conf; \
 		chmod +r /etc/nginx/conf.d/default.conf; \
